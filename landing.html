@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freelancer OS — The Ultimate Notion Business Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #181818;
+    --border: #222222;
+    --accent: #ff4d4d;
+    --accent2: #ff8c42;
+    --text: #f0f0f0;
+    --text2: #888888;
+    --text3: #555555;
+    --card: #141414;
+    --glow: rgba(255,77,77,0.15);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #fafafa;
+      --bg2: #f0f0f0;
+      --bg3: #e8e8e8;
+      --border: #ddd;
+      --text: #0a0a0a;
+      --text2: #555;
+      --text3: #999;
+      --card: #fff;
+      --glow: rgba(255,77,77,0.08);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* GRID BACKGROUND */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GLOW ORBS */
+  .orb1, .orb2 {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(120px);
+  }
+  .orb1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,77,77,0.12) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    animation: float1 8s ease-in-out infinite;
+  }
+  .orb2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,140,66,0.08) 0%, transparent 70%);
+    bottom: 20%; left: -100px;
+    animation: float2 10s ease-in-out infinite;
+  }
+
+  @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,40px)} }
+  @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 0;
+    background: rgba(10,10,10,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  @media (prefers-color-scheme: light) {
+    nav { background: rgba(250,250,250,0.85); }
+  }
+  nav .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .nav-cta:hover { background: #e63e3e; transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    padding: 160px 0 100px;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 8vw, 88px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: var(--text2);
+    max-width: 560px;
+    margin: 0 auto 48px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #fff;
+    padding: 16px 36px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 60px rgba(255,77,77,0.35);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .price-tag {
+    font-size: 13px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .price-tag strong { color: var(--text); font-size: 18px; }
+  .price-tag s { color: var(--text3); font-size: 14px; }
+
+  /* SOCIAL PROOF */
+  .social-proof {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .proof-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .proof-item .icon { font-size: 16px; }
+  .divider-dot { width: 4px; height: 4px; background: var(--border); border-radius: 50%; }
+
+  /* DASHBOARD PREVIEW */
+  .preview-section {
+    padding: 60px 0 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .preview-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.5), 0 0 0 1px var(--border);
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .browser-bar {
+    background: var(--bg2);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dots span {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .browser-dots span:nth-child(1) { background: #ff5f57; }
+  .browser-dots span:nth-child(2) { background: #febc2e; }
+  .browser-dots span:nth-child(3) { background: #28c840; }
+  .browser-url {
+    flex: 1;
+    background: var(--bg3);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: monospace;
+  }
+
+  .dashboard-mock {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    min-height: 380px;
+  }
+  @media (max-width: 600px) {
+    .dashboard-mock { grid-template-columns: 1fr; }
+  }
+
+  .mock-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .mock-panel.full { grid-column: 1 / -1; }
+
+  .mock-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+  }
+  .mock-header .emoji { font-size: 15px; }
+
+  .mock-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text2);
+    animation: shimmer 2s ease-in-out infinite;
+  }
+  .mock-row:last-child { border-bottom: none; }
+  .mock-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-green { background: #22c55e; }
+  .dot-yellow { background: #f59e0b; }
+  .dot-blue { background: #3b82f6; }
+  .dot-red { background: var(--accent); }
+
+  .mock-tag {
+    margin-left: auto;
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .mock-tag.green { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .mock-tag.orange { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .mock-tag.red { background: rgba(255,77,77,0.15); color: var(--accent); }
+
+  .mock-amount {
+    margin-left: auto;
+    font-weight: 600;
+    color: #22c55e;
+    font-size: 12px;
+  }
+
+  @keyframes shimmer {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  /* FEATURES */
+  .features-section {
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 60px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feature-card:hover {
+    border-color: rgba(255,77,77,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px var(--glow);
+  }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .feature-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* WHAT'S INCLUDED */
+  .included-section {
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .included-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 600px) {
+    .included-grid { grid-template-columns: 1fr; }
+  }
+
+  .included-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .included-item:hover { border-color: rgba(255,77,77,0.3); }
+  .included-check {
+    width: 22px; height: 22px;
+    background: rgba(255,77,77,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 1px;
+  }
+  .included-text { font-size: 14px; line-height: 1.5; }
+  .included-text strong { display: block; font-size: 15px; margin-bottom: 2px; }
+  .included-text span { color: var(--text2); }
+
+  /* WHO IT'S FOR */
+  .for-section {
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .for-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .for-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 10px 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .for-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* TESTIMONIALS */
+  .testimonials {
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 48px;
+  }
+
+  .testimonial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .stars { color: #f59e0b; margin-bottom: 12px; font-size: 14px; }
+  .testimonial-text {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .author-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: var(--bg3);
+  }
+  .author-name { font-size: 14px; font-weight: 600; }
+  .author-role { font-size: 12px; color: var(--text2); }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 100px 0;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .cta-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 64px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,77,77,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cta-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+  .cta-box p {
+    color: var(--text2);
+    font-size: 17px;
+    margin-bottom: 40px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .price-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .price-big sup { font-size: 24px; vertical-align: top; margin-top: 8px; }
+  .price-old {
+    font-size: 20px;
+    color: var(--text3);
+    text-decoration: line-through;
+  }
+  .price-note {
+    font-size: 13px;
+    color: var(--text2);
+    background: var(--bg3);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  .cta-guarantees {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .guarantee-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  /* FAQ */
+  .faq-section {
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .faq-list { margin-top: 48px; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    padding: 20px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: color 0.2s;
+  }
+  .faq-question:hover { color: var(--accent); }
+  .faq-arrow {
+    font-size: 18px;
+    color: var(--text2);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); color: var(--accent); }
+
+  .faq-answer {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+  }
+  .faq-item.open .faq-answer {
+    max-height: 300px;
+    padding-bottom: 20px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    position: relative;
+    z-index: 1;
+  }
+  footer .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer p {
+    font-size: 13px;
+    color: var(--text3);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* STICKY CTA BAR */
+  .sticky-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    z-index: 200;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 12px 12px 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+  }
+  .sticky-bar.visible { transform: translateX(-50%) translateY(0); }
+  .sticky-bar-text { font-size: 14px; font-weight: 500; }
+  .sticky-bar-price { font-size: 14px; color: var(--text2); }
+
+  @media (max-width: 500px) {
+    .sticky-bar-text { display: none; }
+    .cta-box { padding: 40px 24px; }
+    .included-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb1"></div>
+<div class="orb2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <div class="logo">Freelancer<span>OS</span></div>
+    <button class="nav-cta" data-gumroad-action="buy">Get it for $9 →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Built for Notion · Free account works
+    </div>
+
+    <h1>
+      Stop juggling apps.
+      <span class="line2">Run your business.</span>
+    </h1>
+
+    <p class="hero-sub">
+      The Freelancer OS is a complete Notion system — manage clients, projects, tasks, and money in one beautiful dashboard.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary" data-gumroad-action="buy">
+        ⚡ Get Instant Access
+      </button>
+      <div class="price-tag">
+        <strong>$9</strong>
+        <s>$29</s>
+        one-time
+      </div>
+    </div>
+
+    <div class="social-proof">
+      <div class="proof-item">
+        <span class="icon">✅</span>
+        Works with free Notion
+      </div>
+      <div class="divider-dot"></div>
+      <div class="proof-item">
+        <span class="icon">⚡</span>
+        Instant access
+      </div>
+      <div class="divider-dot"></div>
+      <div class="proof-item">
+        <span class="icon">🔄</span>
+        Lifetime updates
+      </div>
+      <div class="divider-dot"></div>
+      <div class="proof-item">
+        <span class="icon">🌍</span>
+        Used by freelancers worldwide
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<section class="preview-section">
+  <div class="container">
+    <div class="preview-wrapper reveal">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="browser-url">notion.so / 🏠 Freelancer OS Home</div>
+      </div>
+      <div class="dashboard-mock">
+        <!-- Task Manager -->
+        <div class="mock-panel">
+          <div class="mock-header">
+            <span class="emoji">✅</span> Today's Tasks
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-red"></span>
+            Design Logo Concepts
+            <span class="mock-tag red">High</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-yellow"></span>
+            Client Mood Board
+            <span class="mock-tag orange">Medium</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-blue"></span>
+            Final Presentation
+            <span class="mock-tag">Low</span>
+          </div>
+        </div>
+
+        <!-- Project Tracker -->
+        <div class="mock-panel">
+          <div class="mock-header">
+            <span class="emoji">🚀</span> Active Projects
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-green"></span>
+            Brand Identity Package
+            <span class="mock-tag green">In Progress</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-yellow"></span>
+            Website Redesign
+            <span class="mock-tag orange">Review</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-blue"></span>
+            Social Media Kit
+            <span class="mock-tag">Planning</span>
+          </div>
+        </div>
+
+        <!-- Finance -->
+        <div class="mock-panel">
+          <div class="mock-header">
+            <span class="emoji">💰</span> This Month's Income
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-green"></span>
+            Deposit — Brand Identity
+            <span class="mock-amount">+$750</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-green"></span>
+            Final Payment — Website
+            <span class="mock-amount">+$1,200</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-red"></span>
+            Adobe CC Subscription
+            <span class="mock-amount" style="color:var(--accent)">-$55</span>
+          </div>
+        </div>
+
+        <!-- Client CRM -->
+        <div class="mock-panel">
+          <div class="mock-header">
+            <span class="emoji">👥</span> Active Clients
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-green"></span>
+            Sarah Johnson · Creative Agency
+            <span class="mock-tag green">Active</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-green"></span>
+            Marcus Lee · TechStartup
+            <span class="mock-tag green">Active</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-dot dot-yellow"></span>
+            Priya Patel · E-commerce Co
+            <span class="mock-tag orange">Lead</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What's inside</div>
+      <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <span class="feature-icon">👥</span>
+        <div class="feature-title">Client CRM</div>
+        <div class="feature-desc">Track every client from first contact to final payment. See their status, total revenue, linked projects, and contact details — all in one row.</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🚀</span>
+        <div class="feature-title">Project Tracker</div>
+        <div class="feature-desc">Kanban board, timeline view, and table view for every active job. Link projects to clients and tasks so nothing falls through the cracks.</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">✅</span>
+        <div class="feature-title">Task Manager</div>
+        <div class="feature-desc">Your daily to-do list, connected to your projects. Filter by today, by priority, or by project — always know what to work on next.</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">💰</span>
+        <div class="feature-title">Finance Tracker</div>
+        <div class="feature-desc">Log every payment in and expense out. See your monthly income at a glance and know exactly which projects are most profitable.</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🏠</span>
+        <div class="feature-title">Master Dashboard</div>
+        <div class="feature-desc">One page that shows everything — tasks due today, active projects, recent transactions, and current clients. Your business at a glance.</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">📋</span>
+        <div class="feature-title">Project Brief Template</div>
+        <div class="feature-desc">Click "New Project" and it auto-generates a brief, meeting notes section, and resource links. Professional from day one.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section class="included-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Full package</div>
+      <h2 class="section-title">What you get<br>for $9</h2>
+    </div>
+    <div class="included-grid reveal">
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>👥 Client CRM Database</strong>
+          <span>Track leads, active clients, and past clients with full contact history</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>🚀 Project Tracker Database</strong>
+          <span>Kanban board linked to clients, tasks, and finances</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>✅ Task Manager Database</strong>
+          <span>Daily to-do list with priority levels and due dates</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>💰 Finance Tracker Database</strong>
+          <span>Income and expense log linked to projects</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>🏠 Master Dashboard</strong>
+          <span>The home screen that ties all 4 databases together</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>📖 Step-by-Step Setup Guide</strong>
+          <span>Get up and running in under 30 minutes</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>📋 Project Brief Template</strong>
+          <span>Auto-generates for every new project you create</span>
+        </div>
+      </div>
+      <div class="included-item">
+        <div class="included-check">✓</div>
+        <div class="included-text">
+          <strong>🔄 Lifetime Updates</strong>
+          <span>All future improvements included, forever</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="for-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Perfect for</div>
+      <h2 class="section-title">Built for solo<br>professionals.</h2>
+    </div>
+    <div class="for-grid reveal">
+      <div class="for-pill">🎨 Graphic Designers</div>
+      <div class="for-pill">💻 Web Developers</div>
+      <div class="for-pill">✍️ Copywriters</div>
+      <div class="for-pill">📸 Photographers</div>
+      <div class="for-pill">🎥 Video Editors</div>
+      <div class="for-pill">📊 Consultants</div>
+      <div class="for-pill">📱 Social Media Managers</div>
+      <div class="for-pill">🎙️ Podcast Editors</div>
+      <div class="for-pill">📐 UX Designers</div>
+      <div class="for-pill">🖥️ Virtual Assistants</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What people say</div>
+      <h2 class="section-title">Freelancers love it.</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"I used to track clients in a spreadsheet and projects in Trello. Now everything is in one place and actually connected. Game changer."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">🎨</div>
+          <div>
+            <div class="author-name">Keisha M.</div>
+            <div class="author-role">Graphic Designer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The finance tracker alone is worth the $9. I finally know which clients are actually making me money and which ones are a waste of time."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">💻</div>
+          <div>
+            <div class="author-name">James T.</div>
+            <div class="author-role">Freelance Developer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Set up in 20 minutes following the guide. I've tried so many productivity systems and this is the first one that actually stuck."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">✍️</div>
+          <div>
+            <div class="author-name">Amara S.</div>
+            <div class="author-role">Content Writer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2>Ready to run your<br>business like a pro?</h2>
+      <p>Join freelancers who've replaced their chaotic app stack with one clean Notion system.</p>
+
+      <div class="cta-price">
+        <div class="price-big"><sup>$</sup>9</div>
+        <div>
+          <div class="price-old">$29</div>
+          <div class="price-note">one-time · instant access</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" data-gumroad-action="buy" style="font-size:18px; padding:18px 48px;">
+        ⚡ Get the Freelancer OS
+      </button>
+
+      <div class="cta-guarantees">
+        <div class="guarantee-item">✅ Works with FREE Notion</div>
+        <div class="guarantee-item">⚡ Instant access</div>
+        <div class="guarantee-item">🔄 Lifetime updates</div>
+        <div class="guarantee-item">📖 Setup guide included</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions.</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-question">
+          Do I need a paid Notion account?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-answer">No. Everything in the Freelancer OS works on Notion's free plan. Just create a free account at notion.so and duplicate the template.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          How do I get access after purchase?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-answer">Instantly. After payment you'll receive a Notion template link. Click it, hit "Duplicate", and the entire system copies into your Notion workspace in seconds.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Is this hard to set up?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-answer">Not at all. The template includes a step-by-step setup guide. Most people are up and running in under 30 minutes. The databases are already linked — you just add your own clients and projects.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Can I use this on mobile?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-answer">Yes. Notion has iOS and Android apps. The databases and views work on mobile, though the dashboard is best experienced on desktop.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          What if I want a refund?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-answer">Gumroad handles all transactions and has a standard refund policy. If you have any issues with the template itself, reach out and I'll help you get it set up.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="inner">
+      <div class="logo">Freelancer<span>OS</span></div>
+      <p>Built with ❤️ for freelancers everywhere.</p>
+      <button class="nav-cta" data-gumroad-action="buy">Get it for $9</button>
+    </div>
+  </div>
+</footer>
+
+<!-- STICKY BAR -->
+<div class="sticky-bar" id="stickyBar">
+  <span class="sticky-bar-text">Freelancer OS</span>
+  <span class="sticky-bar-price">$9 one-time</span>
+  <button class="btn-primary" data-gumroad-action="buy" style="font-size:14px; padding:10px 24px;">
+    Get Access ⚡
+  </button>
+</div>
+
+<script>
+  // REVEAL ON SCROLL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // STICKY BAR
+  const stickyBar = document.getElementById('stickyBar');
+  let shown = false;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500 && !shown) {
+      stickyBar.classList.add('visible');
+      shown = true;
+    } else if (window.scrollY < 300 && shown) {
+      stickyBar.classList.remove('visible');
+      shown = false;
+    }
+  });
+
+  // FAQ ACCORDION
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
